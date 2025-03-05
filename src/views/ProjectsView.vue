@@ -1,12 +1,24 @@
 <script setup lang="ts">
-import { Toolbar} from 'primevue';
+import { ref } from 'vue';
+import { Toolbar, Button } from 'primevue';
+import NewProjectModal from '../components/Projects/NewProjectModal.vue';
 import ProjectsTable from '../components/Projects/ProjectsTable.vue';
+
+const projectFormModal = ref();
+
+const openModal = () => {
+  projectFormModal.value.openModal();
+};
 </script>
 
 <template>
   <Toolbar>
     <template #start>
       <h1>Projects</h1>
+    </template>
+    <template #end>
+      <Button label="New Project" @click="openModal" />
+      <NewProjectModal ref="projectFormModal" />
     </template>
   </Toolbar>
   <ProjectsTable />
