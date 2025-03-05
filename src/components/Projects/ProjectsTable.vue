@@ -34,16 +34,18 @@ const getStatusSeverity = (status: string) => {
         :rows="10"
         :rowsPerPageOptions="[5, 10, 20]"
         tableStyle="min-width: 50rem"
+        resizableColumns
+        columnResizeMode="expand"
     >
-      <Column field="id" header="ID" :sortable="true"></Column>
-      <Column field="name" header="Name" :sortable="true"></Column>
-      <Column field="taskCount" header="Number of tasks" :sortable="true"></Column>
+      <Column field="id" header="ID" :sortable="true" />
+      <Column field="name" header="Name" :sortable="true" />
+      <Column field="taskCount" header="Number of tasks" :sortable="true" />
       <Column field="status" header="Status" :sortable="true">
         <template #body="{ data }">
           <Tag :value="data.status" :severity="getStatusSeverity(data.status)" />
         </template>
       </Column>
-      <Column field="createdAt" header="Creation date" :sortable="true"></Column>
+      <Column field="createdAt" header="Creation date" :sortable="true" />
     </DataTable>
   </div>
 </template>
