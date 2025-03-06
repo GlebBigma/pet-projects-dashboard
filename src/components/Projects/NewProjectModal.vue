@@ -56,7 +56,7 @@ defineExpose({ openModal });
             :class="{ 'p-invalid': !projectName && submitted }"
         />
         <small v-if="!projectName && submitted" class="p-error"
-        >Назва проєкту обов'язкова.</small
+        >Project Name is required.</small
         >
       </div>
 
