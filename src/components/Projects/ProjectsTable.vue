@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useConfirm, useToast, Button, DataTable, ConfirmDialog, Column, Tag } from 'primevue';
 import { useProjectsStore } from '../../stores/projects';
 import EditProjectModal from './EditProjectModal.vue';
+import dayjs from 'dayjs'; // Імпортуємо dayjs
 
 const store = useProjectsStore();
 const confirm = useConfirm();
@@ -45,6 +46,11 @@ const deleteProject = (id: number): void => {
     }
   });
 };
+
+// Функція для форматування дати
+const formatDate = (date: string): string => {
+  return dayjs(date).format('YYYY-MM-DD HH:mm:ss'); // Формат, наприклад, 2025-03-07 21:19:47
+};
 </script>
 
 <template>
@@ -61,13 +67,21 @@ const deleteProject = (id: number): void => {
     >
       <Column field="id" header="ID" :sortable="true" />
       <Column field="name" header="Name" :sortable="true" />
-      <Column field="taskCount" header="Number of tasks" :sortable="true" />
+      <Column field="taskCount" header="Number of tasks" :sortable="true">
+        <template #body="{ data }">
+          {{ data.tasks.length }}
+        </template>
+      </Column>
       <Column field="status" header="Status" :sortable="true">
         <template #body="{ data }">
           <Tag :value="data.status" :severity="getStatusSeverity(data.status)" />
         </template>
       </Column>
-      <Column field="createdAt" header="Creation date" :sortable="true" />
+      <Column field="createdAt" header="Creation date" :sortable="true">
+        <template #body="{ data }">
+          {{ formatDate(data.createdAt) }} <!-- Викликаємо форматування -->
+        </template>
+      </Column>
       <Column header="Actions">
         <template #body="{ data }">
           <Button

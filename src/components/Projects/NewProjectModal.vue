@@ -41,9 +41,9 @@ const submitForm = () => {
     id: store.projects.length + 1, // We need UUID here, or real DB (quick fix)
     name: projectName.value.trim(),
     description: projectDescription.value.trim(),
-    taskCount: 0,
     status: 'todo',
     createdAt: new Date().toISOString(),
+    tasks: []
   });
 
   toast.add({ severity: 'success', summary: 'Success', detail: 'Project added', life: 3000 });

@@ -1,8 +1,10 @@
+import type { Task } from './task.ts';
+
 export interface Project {
   id: number;
   name: string;
   description: string;
-  taskCount: number;
   status: 'todo' | 'inProgress' | 'done';
   createdAt: string;
+  tasks: Task[];
 }

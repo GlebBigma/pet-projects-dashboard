@@ -32,7 +32,6 @@ const openModal = (projectId: number) => {
   if (project) {
     projectName.value = project.name;
     projectDescription.value = project.description;
-    taskCount.value = project.taskCount;
     status.value = project.status;
     editingProjectId.value = projectId;
     visible.value = true;
@@ -65,7 +64,6 @@ const submitForm = () => {
       id: editingProjectId.value,
       name: projectName.value,
       description: projectDescription.value,
-      taskCount: taskCount.value,
       status: status.value,
       createdAt: new Date().toISOString(),
     });
@@ -92,10 +90,6 @@ defineExpose({ openModal });
       <div class="p-field">
         <label for="projectDescription">Project Description</label>
         <Textarea id="projectDescription" v-model="projectDescription" rows="5" autoResize />
-      </div>
-      <div class="p-field">
-        <label for="taskCount">Number of Tasks</label>
-        <InputNumber id="taskCount" v-model="taskCount" :min="0" showButtons />
       </div>
       <div class="p-field">
         <label for="status">Status</label>
