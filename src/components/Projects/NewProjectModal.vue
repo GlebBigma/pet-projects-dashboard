@@ -1,9 +1,12 @@
 <script lang="ts" setup>
+import { useProjectsStore } from '../../stores/projects.ts';
 import { ref } from 'vue';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
+
+const store = useProjectsStore();
 
 const projectName = ref('');
 const projectDescription = ref('');
@@ -30,8 +33,14 @@ const submitForm = () => {
   submitted.value = true;
 
   if (projectName.value) {
-    console.log('Назва проєкту:', projectName.value);
-    console.log('Опис проєкту:', projectDescription.value);
+    store.addProject({
+      id: store.projects.length + 1, // Quick fix, we can use UUID.
+      name: projectName.value,
+      description: projectDescription.value,
+      taskCount: 0,
+      status: 'todo',
+      createdAt: new Date().toISOString(),
+    })
     closeModal();
   }
 };

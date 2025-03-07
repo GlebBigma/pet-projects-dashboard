@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import type { Project } from '../../types/project.ts';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Tag from 'primevue/tag';
+import { onMounted, ref } from 'vue';
+import { useConfirm, Button, DataTable, ConfirmDialog, Column, Tag } from 'primevue';
+import { useProjectsStore } from '../../stores/projects.ts';
+import EditProjectModal from './EditProjectModal.vue';
 
-const projects = ref<Project[]>([]);
+const store = useProjectsStore();
+const confirm = useConfirm();
+const editProjectFormModal = ref<InstanceType<typeof EditProjectModal> | null>(null);
+
+onMounted(() => {
+  store.fetchProjects();
+});
 
 const getStatusSeverity = (status: string) => {
   switch (status) {
@@ -19,12 +24,32 @@ const getStatusSeverity = (status: string) => {
       return 'contrast';
   }
 };
+
+const openModal = (id: number) => {
+  // Викликає метод openModal на компоненті EditProjectModal
+  if (editProjectFormModal.value) {
+    editProjectFormModal.value.openModal(id);
+  }
+};
+
+const deleteProject = (id: number) => {
+  confirm.require({
+    message: 'Ви впевнені, що хочете видалити цей проєкт?',
+    header: 'Підтвердження видалення',
+    icon: 'pi pi-exclamation-triangle',
+    acceptClass: 'p-button-danger',
+    acceptLabel: 'Так',
+    rejectLabel: 'Скасувати',
+    accept: () => store.deleteProject(id),
+  });
+};
 </script>
 
 <template>
   <div class="card">
+    <ConfirmDialog />
     <DataTable
-        :value="projects"
+        :value="store.projects"
         :paginator="true"
         :rows="10"
         :rowsPerPageOptions="[5, 10, 20]"
@@ -41,6 +66,21 @@ const getStatusSeverity = (status: string) => {
         </template>
       </Column>
       <Column field="createdAt" header="Creation date" :sortable="true" />
+      <Column header="Actions">
+        <template #body="{ data }">
+          <Button
+              label="Edit"
+              class="p-button-rounded p-button-text p-button-warning"
+              @click="openModal(data.id)"
+          />
+          <EditProjectModal ref="editProjectFormModal" />
+          <Button
+              label="Remove"
+              class="p-button-rounded p-button-text p-button-danger"
+              @click="deleteProject(data.id)"
+          />
+        </template>
+      </Column>
     </DataTable>
   </div>
 </template>
