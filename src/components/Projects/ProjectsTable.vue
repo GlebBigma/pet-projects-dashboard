@@ -1,24 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import type { Project } from '../../types/project.ts';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 
-const projects = ref<Project[]>([
-  { id: 1, name: 'Project Alpha', taskCount: 5, status: 'Active', createdAt: '2023-01-01' },
-  { id: 2, name: 'Project Beta', taskCount: 3, status: 'Inactive', createdAt: '2023-02-15' },
-  { id: 3, name: 'Project Gamma', taskCount: 7, status: 'Active', createdAt: '2023-03-10' },
-  { id: 4, name: 'Project Delta', taskCount: 2, status: 'Completed', createdAt: '2023-04-20' },
-]);
+const projects = ref<Project[]>([]);
 
 const getStatusSeverity = (status: string) => {
   switch (status) {
-    case 'Active':
+    case 'todo':
       return 'success';
-    case 'Inactive':
+    case 'inProgress':
       return 'warning';
-    case 'Completed':
+    case 'done':
       return 'info';
     default:
       return 'contrast';

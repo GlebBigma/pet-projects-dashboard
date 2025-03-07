@@ -2,6 +2,6 @@ export interface Project {
   id: number;
   name: string;
   taskCount: number;
-  status: string;
+  status: 'todo' | 'inProgress' | 'done';
   createdAt: string;
 }
