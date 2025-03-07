@@ -1,46 +1,48 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useConfirm, Button, DataTable, ConfirmDialog, Column, Tag } from 'primevue';
-import { useProjectsStore } from '../../stores/projects.ts';
+import { useConfirm, useToast, Button, DataTable, ConfirmDialog, Column, Tag } from 'primevue';
+import { useProjectsStore } from '../../stores/projects';
 import EditProjectModal from './EditProjectModal.vue';
 
 const store = useProjectsStore();
 const confirm = useConfirm();
-const editProjectFormModal = ref<InstanceType<typeof EditProjectModal> | null>(null);
+const toast = useToast();
+const editProjectFormModal = ref<typeof EditProjectModal | null>(null);
 
 onMounted(() => {
   store.fetchProjects();
 });
 
-const getStatusSeverity = (status: string) => {
+const getStatusSeverity = (status: string): string => {
   switch (status) {
-    case 'todo':
-      return 'success';
-    case 'inProgress':
-      return 'warning';
-    case 'done':
-      return 'info';
-    default:
-      return 'contrast';
+    case 'todo': return 'success';
+    case 'inProgress': return 'warning';
+    case 'done': return 'info';
+    default: return 'contrast';
   }
 };
 
-const openModal = (id: number) => {
-  // Викликає метод openModal на компоненті EditProjectModal
+const openModal = (id: number): void => {
   if (editProjectFormModal.value) {
     editProjectFormModal.value.openModal(id);
   }
 };
 
-const deleteProject = (id: number) => {
+const deleteProject = (id: number): void => {
   confirm.require({
-    message: 'Ви впевнені, що хочете видалити цей проєкт?',
-    header: 'Підтвердження видалення',
+    message: 'Are you sure you want to delete this project?',
+    header: 'Confirm deletion',
     icon: 'pi pi-exclamation-triangle',
     acceptClass: 'p-button-danger',
-    acceptLabel: 'Так',
-    rejectLabel: 'Скасувати',
-    accept: () => store.deleteProject(id),
+    acceptLabel: 'Delete',
+    rejectLabel: 'Cancel',
+    accept: () => {
+      store.deleteProject(id);
+      toast.add({ severity: 'success', summary: 'Success', detail: 'Project deleted', life: 3000 });
+    },
+    reject: () => {
+      toast.add({ severity: 'info', summary: 'Cancelled', detail: 'Delete canceled', life: 3000 });
+    }
   });
 };
 </script>
@@ -84,11 +86,3 @@ const deleteProject = (id: number) => {
     </DataTable>
   </div>
 </template>
-
-<style scoped>
-.card {
-  padding: 20px;
-  background-color: #1e1e1e;
-  color: #ffffff;
-}
-</style>
