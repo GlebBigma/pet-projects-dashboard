@@ -16,7 +16,6 @@ const chartData = ref({
   ],
 })
 
-
 const updateChartData = () => {
   const todoCount = projectsStore.projects.filter(
       (project: Project) => project.status === 'todo'
@@ -40,6 +39,7 @@ onMounted(async () => {
 <template>
   <div class="chart-container">
     <Chart :type="'pie'" :data="chartData" />
+    <RouterLink to="/projects">Go to Projects page</RouterLink>
   </div>
 </template>
 
