@@ -2,14 +2,14 @@
 import { ref, onMounted } from 'vue';
 import { useTasksStore } from '../stores/tasks';
 import { useRoute } from 'vue-router';
-// import { Button } from 'primevue';
+import { Button } from 'primevue';
 import draggable from 'vuedraggable';
 import PageTitle from '../components/UIComponents/PageTitle.vue';
-// import NewTaskModal from '../components/Tasks/NewTaskModal.vue';
+import NewTaskModal from '../components/Tasks/NewTaskModal.vue';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 
-// const taskFormModal = ref();
+const taskFormModal = ref();
 const searchAssignee = ref('');
 const selectedStatus = ref<string | null>(null);
 const statusOptions = ref([
@@ -33,7 +33,11 @@ onMounted(async () => {
   });
 });
 
-const columns = ref([
+const openModal = () => {
+  taskFormModal.value.openModal();
+};
+
+const columns = ref<{ title: string; status: string; tasks: { id: number; name: string; assignee: string; status: string; dueDate: string }[] }[]>([
   { title: 'To Do', status: 'todo', tasks: [] },
   { title: 'In Progress', status: 'inProgress', tasks: [] },
   { title: 'Done', status: 'done', tasks: [] }
@@ -100,10 +104,10 @@ const initResize = (e: MouseEvent, index: number) => {
 
 <template>
   <PageTitle title="Tasks">
-<!--    <template #end>-->
-<!--      <Button label="New Task" @click="openModal" />-->
-<!--      <NewTaskModal ref="taskFormModal" />-->
-<!--    </template>-->
+    <template #end>
+      <Button label="New Task" @click="openModal" />
+      <NewTaskModal ref="taskFormModal" />
+    </template>
   </PageTitle>
 
   <div class="filters">
