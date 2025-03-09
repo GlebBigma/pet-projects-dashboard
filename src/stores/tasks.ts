@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import api from '../api';
-import type { Task } from '../types/task.ts';
+import type { Task } from '../types/task';
+// import type { Project } from '../types/project';
 
 export const useTasksStore = defineStore('tasks', () => {
   const tasks = ref<Task[]>([]);
 
   const fetchTasksByProjectId = async (projectId: number) => {
-    console.log('projectID > ', projectId);
     try {
       const response = await api.get('/projects');
       const project = response.data.find((p: { id: string }) => p.id === projectId.toString());
@@ -19,33 +19,31 @@ export const useTasksStore = defineStore('tasks', () => {
     }
   };
 
-  // const addTask = async (task: Task) => {
+  // For Future development, need fixes
+  // const addTask = async (task: Task, projectId: number) => {
+  //   console.log('ProjectID > ', projectId);
+  //   console.log('Task ', task);
   //   try {
-  //     const response = await api.post('/tasks', task);
-  //     tasks.value.push(response.data);
-  //   } catch (error) {
-  //     console.error('Error adding task:', error);
-  //   }
-  // };
+  //     const response = await api.get('/projects');
+  //     console.log('Response > ', response.data);
+  //     const project = response.data.find((p: Project) => p.id === projectId);
   //
-  // const updateTask = async (id: number, updatedData: Partial<Task>) => {
-  //   try {
-  //     await api.patch(`/tasks/${id}`, updatedData);
-  //     const index = tasks.value.findIndex((t) => t.id === id);
-  //     if (index !== -1) {
-  //       tasks.value[index] = { ...tasks.value[index], ...updatedData };
+  //     console.log('>>> PROJECT', project);
+  //
+  //     if (project) {
+  //       project.tasks.push(task);
+  //
+  //       await api.put(`/projects/${projectId}`, project);
+  //
+  //       const projectIndex = response.data.findIndex((p: Project) => p.id === projectId);
+  //       if (projectIndex !== -1) {
+  //         response.data[projectIndex].tasks = project.tasks;
+  //       }
+  //     } else {
+  //       console.error('Project not found');
   //     }
   //   } catch (error) {
-  //     console.error('Error updating task:', error);
-  //   }
-  // };
-  //
-  // const deleteTask = async (id: number) => {
-  //   try {
-  //     await api.delete(`/tasks/${id}`);
-  //     tasks.value = tasks.value.filter((t) => t.id !== id);
-  //   } catch (error) {
-  //     console.error('Error deleting task:', error);
+  //     console.error('Error adding task:', error);
   //   }
   // };
 
@@ -53,7 +51,5 @@ export const useTasksStore = defineStore('tasks', () => {
     tasks,
     fetchTasksByProjectId,
     // addTask,
-    // updateTask,
-    // deleteTask
   };
 });

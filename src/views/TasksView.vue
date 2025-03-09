@@ -106,7 +106,7 @@ const initResize = (e: MouseEvent, index: number) => {
   <PageTitle title="Tasks">
     <template #end>
       <Button label="New Task" @click="openModal" />
-      <NewTaskModal ref="taskFormModal" />
+      <NewTaskModal ref="taskFormModal" :projectId={projectId} />
     </template>
   </PageTitle>
 

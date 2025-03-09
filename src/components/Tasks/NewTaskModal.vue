@@ -1,10 +1,18 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { defineProps, ref } from 'vue';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
+import { useTasksStore } from '../../stores/tasks';
+
+const props = defineProps({
+  projectId: {
+    type: Number,
+    required: true
+  }
+});
 
 const taskName = ref('');
 const assignee = ref(null);
@@ -13,8 +21,8 @@ const dueDate = ref(null);
 const submitted = ref(false);
 
 const visible = ref(false);
+const currentProjectId = ref<number | null>(null);
 
-// Данні для списку виконавців і статусів
 const assignees = ref([
   { label: 'Іван', value: 'Ivan' },
   { label: 'Марія', value: 'Maria' },
@@ -27,7 +35,10 @@ const statuses = ref([
   { label: 'Done', value: 'Done' }
 ]);
 
+const tasksStore = useTasksStore();
+
 const openModal = () => {
+  currentProjectId.value = props.projectId.projectId;
   visible.value = true;
 };
 
@@ -44,14 +55,20 @@ const resetForm = () => {
   submitted.value = false;
 };
 
-const submitForm = () => {
+const submitForm = async () => {
   submitted.value = true;
 
-  if (taskName.value && assignee.value && status.value && dueDate.value) {
-    console.log('Назва завдання:', taskName.value);
-    console.log('Виконавець:', assignee.value);
-    console.log('Статус:', status.value);
-    console.log('Термін виконання:', dueDate.value);
+  if (taskName.value && assignee.value && status.value && dueDate.value && currentProjectId.value) {
+    const newTask = {
+      id: Date.now(),
+      name: taskName.value,
+      assignee: assignee.value,
+      status: status.value,
+      // dueDate: dueDate.value.toISOString()
+      dueDate: dueDate.value
+    };
+
+    await tasksStore.addTask(newTask, currentProjectId.value);
     closeModal();
   }
 };
