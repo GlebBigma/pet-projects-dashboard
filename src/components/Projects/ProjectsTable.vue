@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
@@ -18,6 +19,7 @@ const store = useProjectsStore();
 const confirm = useConfirm();
 const toast = useToast();
 const editProjectFormModal = ref<InstanceType<typeof EditProjectModal> | null>(null);
+const router = useRouter();
 
 const searchName = ref('');
 const selectedStatus = ref<string | null>(null);
@@ -73,6 +75,11 @@ const statusOptions = ref([
   { label: 'In Progress', value: 'inProgress' },
   { label: 'Done', value: 'done' }
 ]);
+
+const navigateToTasks = (event: { data: { id: number } }): void => {
+  const projectId = event.data.id;
+  router.push({ name: 'tasks', params: { projectsId: projectId } });
+};
 </script>
 
 <template>
@@ -102,7 +109,8 @@ const statusOptions = ref([
         tableStyle="min-width: 50rem"
         resizableColumns
         columnResizeMode="expand"
-        :customSort="true"
+        :rowHover="true"
+        @row-click="navigateToTasks"
     >
       <Column field="id" header="ID" sortable />
       <Column field="name" header="Name" sortable />

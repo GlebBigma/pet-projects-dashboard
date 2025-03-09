@@ -4,8 +4,8 @@ import ProjectsView from './views/ProjectsView.vue';
 import TasksView from './views/TasksView.vue';
 
 const routes = [
-  {path: '/', name: 'projects', component: ProjectsView},
-  {path: '/tasks', name: 'tasks', component: TasksView},
+  { path: '/projects', name: 'projects', component: ProjectsView },
+  { path: '/projects/:projectsId', name: 'tasks', component: TasksView },
 ];
 
 export const router = createRouter({
