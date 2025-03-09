@@ -18,7 +18,7 @@
           "id": 2,
           "name": "Task 2 for Project 1",
           "assignee": "Bob Johnson",
-          "status": "todo",
+          "status": "done",
           "dueDate": "2025-03-12T00:00:00.000Z"
         }
       ]

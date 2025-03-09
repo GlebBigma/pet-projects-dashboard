@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { Button } from 'primevue';
+import { ref, onMounted } from 'vue';
+import { useTasksStore } from '../stores/tasks';
+import { useRoute } from 'vue-router';
+// import { Button } from 'primevue';
 import draggable from 'vuedraggable';
 import PageTitle from '../components/UIComponents/PageTitle.vue';
-import NewTaskModal from '../components/Tasks/NewTaskModal.vue';
+// import NewTaskModal from '../components/Tasks/NewTaskModal.vue';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 
-const taskFormModal = ref();
-
+// const taskFormModal = ref();
 const searchAssignee = ref('');
 const selectedStatus = ref<string | null>(null);
-
 const statusOptions = ref([
   { label: 'All', value: null },
   { label: 'To Do', value: 'todo' },
@@ -19,33 +19,24 @@ const statusOptions = ref([
   { label: 'Done', value: 'done' }
 ]);
 
-const openModal = () => {
-  taskFormModal.value.openModal();
-};
+const tasksStore = useTasksStore();
+const route = useRoute();
+const projectId = parseInt(route.params.projectsId as string);
+
+onMounted(async () => {
+  await tasksStore.fetchTasksByProjectId(projectId);
+
+  const tasks = tasksStore.tasks;
+
+  columns.value.forEach(column => {
+    column.tasks = tasks.filter(task => task.status.toLowerCase() === column.status);
+  });
+});
 
 const columns = ref([
-  {
-    title: 'To Do',
-    status: 'To Do',
-    tasks: [
-      { id: 1, title: 'Завдання 1', assignee: 'Іван', status: 'To Do', dueDate: '2025-03-10' },
-      { id: 2, title: 'Завдання 2', assignee: 'Марія', status: 'To Do', dueDate: '2025-03-12' }
-    ]
-  },
-  {
-    title: 'In Progress',
-    status: 'In Progress',
-    tasks: [
-      { id: 3, title: 'Завдання 3', assignee: 'Олексій', status: 'In Progress', dueDate: '2025-03-08' }
-    ]
-  },
-  {
-    title: 'Done',
-    status: 'Done',
-    tasks: [
-      { id: 4, title: 'Завдання 4', assignee: 'Анна', status: 'Done', dueDate: '2025-03-06' }
-    ]
-  }
+  { title: 'To Do', status: 'todo', tasks: [] },
+  { title: 'In Progress', status: 'inProgress', tasks: [] },
+  { title: 'Done', status: 'done', tasks: [] }
 ]);
 
 const tableHeaders = ['ID', 'Name', 'Assignee', 'Status', 'Deadline'];
@@ -108,18 +99,18 @@ const initResize = (e: MouseEvent, index: number) => {
 </script>
 
 <template>
-  <PageTitle title="Projects">
-    <template #end>
-      <Button label="New Task" @click="openModal" />
-      <NewTaskModal ref="taskFormModal" />
-    </template>
+  <PageTitle title="Tasks">
+<!--    <template #end>-->
+<!--      <Button label="New Task" @click="openModal" />-->
+<!--      <NewTaskModal ref="taskFormModal" />-->
+<!--    </template>-->
   </PageTitle>
 
   <div class="filters">
-      <span class="p-input-icon-left">
-        <i class="pi pi-search" />
-        <InputText v-model="searchAssignee" placeholder="Filter by Assignee" />
-      </span>
+    <span class="p-input-icon-left">
+      <i class="pi pi-search" />
+      <InputText v-model="searchAssignee" placeholder="Filter by Assignee" />
+    </span>
 
     <Dropdown
         v-model="selectedStatus"
@@ -161,7 +152,7 @@ const initResize = (e: MouseEvent, index: number) => {
           <template #item="{ element }">
             <tr v-if="isFiltered(element)" :key="element.id">
               <td>{{ element.id }}</td>
-              <td>{{ element.title }}</td>
+              <td>{{ element.name }}</td>
               <td>{{ element.assignee }}</td>
               <td>{{ element.status }}</td>
               <td>{{ element.dueDate }}</td>
