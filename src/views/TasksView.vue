@@ -1,11 +1,23 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { Toolbar, Button } from 'primevue';
+import { Button } from 'primevue';
 import draggable from 'vuedraggable';
+import PageTitle from '../components/UIComponents/PageTitle.vue';
 import NewTaskModal from '../components/Tasks/NewTaskModal.vue';
 import InputText from 'primevue/inputtext';
+import Dropdown from 'primevue/dropdown';
 
 const taskFormModal = ref();
+
+const searchAssignee = ref('');
+const selectedStatus = ref<string | null>(null);
+
+const statusOptions = ref([
+  { label: 'All', value: null },
+  { label: 'To Do', value: 'todo' },
+  { label: 'In Progress', value: 'inProgress' },
+  { label: 'Done', value: 'done' }
+]);
 
 const openModal = () => {
   taskFormModal.value.openModal();
@@ -96,27 +108,28 @@ const initResize = (e: MouseEvent, index: number) => {
 </script>
 
 <template>
-  <Toolbar>
-    <template #start>
-      <h1>Projects Tasks</h1>
-    </template>
+  <PageTitle title="Projects">
     <template #end>
       <Button label="New Task" @click="openModal" />
       <NewTaskModal ref="taskFormModal" />
     </template>
-  </Toolbar>
+  </PageTitle>
+
   <div class="filters">
-    <InputText
-        id="filterByPerformer"
-        v-model="filters.assignee"
-        placeholder="Filter by Assignee"
-    />
-    <InputText
-        id="filterByStatus"
-        v-model="filters.status"
-        placeholder="Filter by Status"
+      <span class="p-input-icon-left">
+        <i class="pi pi-search" />
+        <InputText v-model="searchAssignee" placeholder="Filter by Assignee" />
+      </span>
+
+    <Dropdown
+        v-model="selectedStatus"
+        :options="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Filter by status"
     />
   </div>
+
   <div class="task-sections">
     <div class="task-section" v-for="column in columns" :key="column.status">
       <h2>{{ column.title }}</h2>
@@ -161,19 +174,15 @@ const initResize = (e: MouseEvent, index: number) => {
 </template>
 
 <style scoped>
-.p-toolbar {
-  padding: 20px;
-  margin-bottom: 20px;
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
 
-  background-color: #1e1e1e;
-  border: none;
-  border-radius: 0;
-  color: #ffffff;
-
-  h1 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
+.p-inputtext {
+  height: 42px;
 }
 
 .task-sections {
@@ -182,7 +191,7 @@ const initResize = (e: MouseEvent, index: number) => {
   gap: 20px;
 }
 .task-section {
-  background: #1e1e1e;
+  background: #18181b;
   padding: 16px;
   border-radius: 8px;
 
@@ -194,18 +203,30 @@ const initResize = (e: MouseEvent, index: number) => {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+
+  th,
+  td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid transparent;
+    position: relative;
+  }
+
+  th {
+    background-color: #18181b;
+    border-bottom-color: #27272a;
+    color: #fff;
+  }
+
+  td {
+    border-bottom-color: #27272a;
+    
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
-.task-table th,
-.task-table td {
-  padding: 8px;
-  text-align: left;
-  border: 1px solid #444;
-  position: relative;
-}
-.task-table th {
-  background-color: #333;
-  color: #fff;
-}
+
 .resize-handle {
   position: absolute;
   right: 0;
@@ -213,10 +234,6 @@ const initResize = (e: MouseEvent, index: number) => {
   width: 5px;
   height: 100%;
   cursor: ew-resize;
-}
-
-.filters {
-  margin-bottom: 20px;
 }
 
 .sort-buttons {
